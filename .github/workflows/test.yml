@@ -10,8 +10,14 @@ jobs:
 
       - name: Check ref
         run: |
-          echo "$GITHUB_REF - $(jq -r '.ref' "$GITHUB_EVENT_PATH")"
-          echo "tag? $(git -C "$GITHUB_WORKSPACE" tag --points-at)"
+          if [[ -n "$GITHUB_ACTIONS" && "$GITHUB_REF" =~ "refs/heads"* ]]; then
+            GITHUB_TAG=$( git -C "$GITHUB_WORKSPACE" tag --points-at )
+            if [ -n "$GITHUB_TAG" ]; then
+              echo "Found future tag: $GITHUB_TAG"
+            else
+              echo "$GITHUB_SHA is not tagged"
+            fi
+          fi
 
       - name: Dump env
         run: printenv | grep GITHUB | sort
