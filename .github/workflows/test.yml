@@ -18,4 +18,4 @@ jobs:
           git -C "$GITHUB_WORKSPACE" tag --points-at
 
       - name: Test vars
-        run: echo "$TEST_VAR1 : $TEST_VAR2"
+        run: echo "$TEST_VAR1 - $TEST_VAR2"
