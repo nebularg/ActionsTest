@@ -8,14 +8,15 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Set vars
-        run: TEST_VAR1="hi"; export TEST_VAR2="ho"
-
       - name: Check ref
         run: |
-          echo "$GITHUB_ACTIONS - $GITHUB_ACTION - $GITHUB_REF"
+          pwd
+          echo "$GITHUB_ACTIONS - $GITHUB_ACTION - $GITHUB_REF - $GITHUB_WORKSPACE"
           jq '.ref' "$GITHUB_EVENT_PATH"
-          git -C "$GITHUB_WORKSPACE" tag --points-at
+          echo "tag? $(git -C "$GITHUB_WORKSPACE" tag --points-at)"
 
-      - name: Test vars
-        run: echo "$TEST_VAR1 - $TEST_VAR2"
+      - name: Dump env
+        run: printenv
+
+      - name: Dump payload
+        run: jq -C '.' "$GITHUB_EVENT_PATH"
