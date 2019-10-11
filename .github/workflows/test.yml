@@ -1,0 +1,21 @@
+name: Test
+
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set vars
+        run: TEST_VAR1="hi"; export TEST_VAR2="ho"
+
+      - name: Check ref
+        run: |
+          echo "$GITHUB_ACTIONS - $GITHUB_ACTION - $GITHUB_REF"
+          jq '.ref' "$GITHUB_EVENT_PATH"
+          git -C "$GITHUB_WORKSPACE" tag --points-at
+
+      - name: Test vars
+        run: echo "$TEST_VAR1 : $TEST_VAR2"
