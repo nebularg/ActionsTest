@@ -10,13 +10,11 @@ jobs:
 
       - name: Check ref
         run: |
-          pwd
-          echo "$GITHUB_ACTIONS - $GITHUB_ACTION - $GITHUB_REF - $GITHUB_WORKSPACE"
-          jq '.ref' "$GITHUB_EVENT_PATH"
+          echo "$GITHUB_REF - $(jq -r '.ref' "$GITHUB_EVENT_PATH")"
           echo "tag? $(git -C "$GITHUB_WORKSPACE" tag --points-at)"
 
       - name: Dump env
-        run: printenv
+        run: printenv | grep GITHUB
 
       - name: Dump payload
         run: jq -C '.' "$GITHUB_EVENT_PATH"
