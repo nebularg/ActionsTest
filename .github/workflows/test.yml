@@ -14,7 +14,7 @@ jobs:
           echo "tag? $(git -C "$GITHUB_WORKSPACE" tag --points-at)"
 
       - name: Dump env
-        run: printenv | grep GITHUB
+        run: printenv | grep GITHUB | sort
 
       - name: Dump payload
         run: jq -C '.' "$GITHUB_EVENT_PATH"
