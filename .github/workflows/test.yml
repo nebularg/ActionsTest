@@ -5,7 +5,7 @@ on: push
 jobs:
   test:
     runs-on: ubuntu-latest
-    if: !contains(github.head_ref, 'skip ci')
+    if: !contains(github.ref, 'skip ci')
 
     steps:
       - uses: actions/checkout@v1
