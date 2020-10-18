@@ -1,0 +1,76 @@
+name: luacheck
+description: Runs luacheck.
+branding:
+  icon: check-square
+  color: yellow
+inputs:
+  files:
+    description: >
+      A list of files, rockspecs, or directories to be checked.
+
+      Defaults to the workspace path as set by the `path` input.
+    required: false
+    default: '.'
+  path:
+    description: >
+      The working directory for luacheck.
+
+      The file list should be relative to this path and output
+      filenames be displayed relative to this path.
+
+      Defaults to the workspace path.
+    required: false
+    default: ${{ github.workspace }}
+  args:
+    description: >
+      Additional command-line arguments.
+
+      See https://luacheck.readthedocs.io/en/stable/cli.html
+    required: false
+  config:
+    description: >
+      URL to a custom configuration (`.luacheckrc`) file that will be
+      used as the default configuration file.
+    required: false
+  annotate:
+    description: >
+      Emits annotations for source code at locations parsed from the output.
+      Must be set to "none", "warning" or "error".
+
+      Requires that output of warnings not be suppressed through the -qq or -qqq arguments.
+
+      Defaults to "warning"
+    required: false
+    default: warning
+runs:
+  using: composite
+  steps:
+    - run: |
+        echo "##[group]Install luacheck"
+        if ! hash luacheck &>/dev/null; then
+          sudo apt-get install -yq luarocks 1>/dev/null || exit 1
+          sudo luarocks install luacheck 1>/dev/null || exit 1
+          sudo luarocks install lanes &>/dev/null || true
+        fi
+        echo "##[command]luacheck --version"
+        luacheck --version
+        echo "##[endgroup]"
+      shell: bash
+    - run: |
+        [ -z "${{ inputs.config }}" ] && exit 0
+        mkdir -p ~/.config/luacheck
+        curl -fsSL "${{ inputs.config }}" -o ~/.config/luacheck/.luacheckrc || {
+          echo "Unable to download \"${{ inputs.config }}\"" >&2
+          exit 1
+        }
+      shell: bash
+    - run: |
+        luacheck ${{ inputs.args }} -- ${{ inputs.files }} | awk -F':' -v level="${{ inputs.annotate }}" '
+          { print }
+          /^\s+.+?:[0-9]+:[0-9]+:/ {
+            gsub(/^\s+|\s+$/, "")
+            gsub(/^\s+/, "", $4)
+            printf "::%s file=%s,line=%s,col=%s::%s\r\033[0K", level, $1, $2, $3, $4
+          }'
+      working-directory: ${{ inputs.path }}
+      shell: bash

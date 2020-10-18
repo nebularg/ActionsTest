@@ -39,3 +39,5 @@ jobs:
 
       - name: Dump runner context
         run: echo "${{ toJson(runner) }}"
+
+      - uses: ./.github/actions/annotate
