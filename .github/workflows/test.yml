@@ -39,8 +39,3 @@ jobs:
 
       - name: Dump runner context
         run: echo "${{ toJson(runner) }}"
-
-      - name: Git check
-        run: |
-          git config --get user.name
-          git config --get user.email
