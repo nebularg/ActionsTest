@@ -1,4 +1,4 @@
 local test = true
 A = false
 
-print(test, A)
+print(test, A, B)
