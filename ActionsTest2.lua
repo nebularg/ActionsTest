@@ -1,4 +1,4 @@
 local test = true
-A = false
+A false
+
 print(test, A, B)
-B true
