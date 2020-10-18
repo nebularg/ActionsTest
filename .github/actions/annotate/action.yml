@@ -68,9 +68,10 @@ runs:
         luacheck ${{ inputs.args }} -- ${{ inputs.files }} | awk -F':' -v level="${{ inputs.annotate }}" '
           { print }
           /^\s+.+?:[0-9]+:[0-9]+:/ {
+            gsub(/[^[:print:]]|\[[0-9]{1,2}m/,"") # annoying escapes
             gsub(/^\s+|\s+$/, "")
             gsub(/^\s+/, "", $4)
-            printf "::%s file=%s,line=%s,col=%s::%s\r\033[0K", level, $1, $2, $3, $4
+            printf "::%s file=%s,line=%s,col=%s::%s", level, $1, $2, $3, $4
           }'
       working-directory: ${{ inputs.path }}
       shell: bash
