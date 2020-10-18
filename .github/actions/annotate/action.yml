@@ -32,16 +32,6 @@ inputs:
       URL to a custom configuration (`.luacheckrc`) file that will be
       used as the default configuration file.
     required: false
-  annotate:
-    description: >
-      Emits annotations for source code at locations parsed from the output.
-      Must be set to "none", "warning" or "error".
-
-      Requires that output of warnings not be suppressed through the -qq or -qqq arguments.
-
-      Defaults to "warning"
-    required: false
-    default: warning
 runs:
   using: composite
   steps:
@@ -65,17 +55,17 @@ runs:
         }
       shell: bash
     - run: |
-        luacheck ${{ inputs.args }} -- ${{ inputs.files }} | awk -F':' -v level="${{ inputs.annotate }}" '
-          { print }
-          /^\s+.+?:[0-9]+:[0-9]+:/ {
-            gsub(/[^[:print:]]|\[[0-9]{1,2}m/,"") # annoying escapes
-            gsub(/^\s+|\s+$/, "")
+        luacheck ${{ inputs.args }} -- ${{ inputs.files }} | awk -F':' '
+          { print; gsub(/\x1B\[[0-9]{1,2}m/,"") } # remove formatting after printing
+          match($0, /^Checking .*[0-9] (warning|error)s?$/, m) { level = m[1] } # set the level
+          /^\s+.+?:[0-9]+:[0-9]+: / {
+            gsub(/^\s+|\s+$/, "") # trim whitespace
             output[count++] = sprintf("::%s file=%s,line=%s,col=%s::luacheck:%s", level, $1, $2, $3, $4)
           }
           END {
             if (count > 0) {
-              printf "\n"
-              for (i=0; i<=count; i++) {
+              print ""
+              for (i = 0; i <= count; i++) {
                 print output[i]
               }
             }
