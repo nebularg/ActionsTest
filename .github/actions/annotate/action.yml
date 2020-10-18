@@ -71,7 +71,7 @@ runs:
             gsub(/[^[:print:]]|\[[0-9]{1,2}m/,"") # annoying escapes
             gsub(/^\s+|\s+$/, "")
             gsub(/^\s+/, "", $4)
-            printf "::%s file=%s,line=%s,col=%s::%s", level, $1, $2, $3, $4
+            printf "::%s file=%s,line=%s,col=%s::%s\n", level, $1, $2, $3, $4
           }'
       working-directory: ${{ inputs.path }}
       shell: bash
