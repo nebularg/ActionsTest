@@ -34,7 +34,7 @@ inputs:
     required: false
   annotate:
     description: >
-      Emits annotations for source code at locations parsed from the output.
+      Emit annotations for source code at locations parsed from the output.
 
       Requires that output of warnings not be suppressed through the -qq or -qqq arguments.
 
@@ -65,19 +65,21 @@ runs:
       shell: bash
     - run: |
         luacheck ${{ inputs.args }} -- ${{ inputs.files }} | awk -F':' -v enabled="${{ inputs.annotate }}" '
-          { print; gsub(/\x1B\[[0-9]{1,2}m/,"") } # remove formatting after printing
-          match($0, /^Checking .*[0-9] (warning|error)s?$/, m) { level = m[1] } # set the level
-          /^\s+.+?:[0-9]+:[0-9]+: / {
-            gsub(/^\s+|\s+$/, "") # trim whitespace
-            output[count++] = sprintf("::%s file=%s,line=%s,col=%s::luacheck:%s", level, $1, $2, $3, $4)
+          {
+            line = $0 # save the formatted line
+            gsub(/\x1B\[[0-9]{1,2}m/,"") # remove formatting
+            if (match($0, /^Checking .*[0-9] (warning|error)s?$/, c) != 0)
+              level = c[1]
           }
-          END {
-            if (count > 0 && (enabled == "true" || enabled == "warning" || enabled == "error")) {
-              print ""
-              for (i = 0; i <= count; i++) {
-                print output[i]
-              }
+          m = /^\s+.+?:[0-9]+:[0-9]+: / {
+            if (enabled == "true" || enabled == "warning" || enabled == "error") {
+              gsub(/^\s+|\s+$/, "") # trim whitespace
+              printf("::%s file=%s,line=%s,col=%s::%s\n", level, $1, $2, $3, $0)
+            } else {
+              print line
             }
-          }'
+          }
+          !m { print line }
+        '
       working-directory: ${{ inputs.path }}
       shell: bash
