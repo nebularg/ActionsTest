@@ -1,4 +1,21 @@
 local test = true
-A = false
-
-print(test, A, B)
+local test = 1
+local test = 2
+local test = 3
+local test = 4
+local test = 5
+local test = 6
+local test = 7
+local test = 8
+local test = 9
+local test = 10
+local test = 11
+local test = 12
+local test = 13
+local test = 14
+local test = 15
+local test = 16
+local test = 17
+local test = 18
+local test = 19
+local test = 20
