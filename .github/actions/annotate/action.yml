@@ -83,3 +83,5 @@ runs:
         '
       working-directory: ${{ inputs.path }}
       shell: bash
+    - run: echo "::notice title=The-Title::Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse molestie condimentum nulla sed efficitur.\\n\\nSed sagittis, lectus pulvinar lobortis fermentum, elit elit semper mauris, vel molestie orci leo et lacus. Curabitur varius et lorem sed volutpat. Nullam vel risus vel nunc porta lacinia."
+      shell: bash
