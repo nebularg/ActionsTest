@@ -1,7 +1,3 @@
 #!/usr/bin/env bash
 
-echo "INPUT_FILES: ${INPUT_FILES}"
-echo "INPUT_PATH: ${INPUT_PATH}"
-echo "INPUT_ANNOTATE: ${INPUT_ANNOTATE}"
-
-# printenv | sort
+sudo apt-get install -yq subversion &>/dev/null && echo -e "##[group]Install subversion\\n[command]svn --version\\n$( svn --version )\\n##[endgroup]"
