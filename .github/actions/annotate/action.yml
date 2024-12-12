@@ -83,6 +83,6 @@ runs:
         '
       working-directory: ${{ inputs.path }}
       shell: bash
-    - run: printenv | sort
+    - run: $GITHUB_ACTION_PATH/printenv.sh
       if: ${{ always() }}
       shell: bash
