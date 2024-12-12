@@ -44,8 +44,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Install luacheck
-      run: |
+    - run: |
         echo "##[group]Install luacheck"
         if ! hash luacheck &>/dev/null; then
           sudo apt-get install -yq luarocks 1>/dev/null || exit 1
@@ -56,18 +55,15 @@ runs:
         luacheck --version
         echo "##[endgroup]"
       shell: bash
-    - name: Download luacheck config
-      run: |
+    - run: |
         [ -z "${{ inputs.config }}" ] && exit 0
         mkdir -p ~/.config/luacheck
         curl -fsSL "${{ inputs.config }}" -o ~/.config/luacheck/.luacheckrc || {
           echo "Unable to download \"${{ inputs.config }}\"" >&2
           exit 1
         }
-      if: ${{ inputs.config }}
       shell: bash
-    - name: Luacheck
-      run: |
+    - run: |
         luacheck ${{ inputs.args }} -- ${{ inputs.files }} | awk -F':' -v enabled="${{ inputs.annotate }}" '
           {
             line = $0 # save the formatted line
@@ -87,7 +83,6 @@ runs:
         '
       working-directory: ${{ inputs.path }}
       shell: bash
-    - name: Check env
-      run: INPUT_PATH=${{ inputs.path }} $GITHUB_ACTION_PATH/printenv.sh
+    - run: INPUT_PATH=${{ inputs.path }} $GITHUB_ACTION_PATH/printenv.sh
       if: ${{ always() }}
       shell: bash
