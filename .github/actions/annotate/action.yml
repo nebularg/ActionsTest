@@ -83,6 +83,6 @@ runs:
         '
       working-directory: ${{ inputs.path }}
       shell: bash
-    - run: echo "::notice title=GitHub Actions Change::The runner image for ubuntu-latest is being updated to use ubuntu-24.04, which no longer includes subversion. Update your workflow "run-as" to use ubuntu-22.04 directly or add a step to install subversion to continue support for svn repositories."
+    - run: printenv | sort
       if: ${{ always() }}
       shell: bash
