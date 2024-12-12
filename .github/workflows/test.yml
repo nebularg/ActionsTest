@@ -27,17 +27,23 @@ jobs:
 
       - name: Dump payload
         run: jq -C '.' "$GITHUB_EVENT_PATH"
+        if: ${{ always() }}
 
       - name: Dump GitHub context
         run: echo "${{ toJson(github) }}"
+        if: ${{ always() }}
 
       - name: Dump job context
         run: echo "${{ toJson(job) }}"
+        if: ${{ always() }}
 
       - name: Dump steps context
         run: echo "${{ toJson(steps) }}"
+        if: ${{ always() }}
 
       - name: Dump runner context
         run: echo "${{ toJson(runner) }}"
+        if: ${{ always() }}
 
       - uses: ./.github/actions/annotate
+        if: ${{ always() }}
